@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="modal-overlay" class="modal-overlay closed"></div>
+
+	<div id="modal" class="modal closed">
+		<button id="close-button" class="my-button close-button" title="Закрыть модальное окно">Закрыть</button>
+		<div class="modal-guts">
+			<button id="append" title="Добавить элемент в массив">Добавить</button>
+			<button id="delete" title="Удалить элемент из массива">Удалить</button>
+			<ol id="arr-list"></ol>
+		</div>
+	</div>
+	<button id="open-button" class="my-button open-button" title="Открыть модальное окно">Открыть окно</button>
+</body>
+
+<script>
+	/* exercise 1 */
+	Array.prototype.each = function(param){
+		for(var i=0; i< this.length; i++) {
+			param.call(this[i]);
+		}
+	};
+	//["sdf", 423].each(function(){alert(this)});
+
+	/* exercise 2 */
+	var MyClass = function () {
+		return this;
+	};
+
+	MyClass.prototype = Object.create(Array.prototype);
+
+	MyClass.prototype.view = function() {
+		var add = document.querySelector("#append"),
+			del = document.querySelector("#delete"),
+			content = document.querySelector("#arr-list");
+		var self = this;	
+
+		function showArray() {
+			content.innerHTML="";
+			self.forEach(function(item) {
+				var li = document.createElement("li");
+				li.textContent = item;
+				content.appendChild(li);
+			});
+		} 
+		showArray();
+
+		add.onclick = function() {
+			self.push(prompt('Введите значение:'));
+			showArray();
+		};
+
+		del.onclick = function() {
+			self.pop();
+			showArray();
+		};
+	}
+
+	//Modal window
+	var modal = document.querySelector("#modal"),
+	modalOverlay = document.querySelector("#modal-overlay"),
+	modalGuts = document.querySelector(".modal-guts"),
+	closeButton = document.querySelector("#close-button"),
+	openButton = document.querySelector("#open-button");
+
+	closeButton.onclick = function() {
+		modal.classList.toggle("closed");
+		modalOverlay.classList.toggle("closed");
+	};
+
+	openButton.onclick = function() {
+		modal.classList.toggle("closed");
+		modalOverlay.classList.toggle("closed");
+	};
+
+	var myClass = new MyClass();
+	myClass.push('a', 'b', 'c', 1, 2, 3);
+	myClass.view();
+
+	/* exercise 3 */
+	var TextArea = function () {
+		var textArea = document.createElement("textarea");
+		
+		var undoBtn = document.createElement("button");
+		undoBtn.textContent = 'Undo';
+		undoBtn.id = "undo-btn";
+
+		document.body.appendChild(textArea);
+		document.body.appendChild(undoBtn);
+
+		var arrActions = [''];
+		
+		textArea.oninput = function() {
+			arrActions.push(this.value);
+		};
+
+		undoBtn.onclick = function() {
+			if(arrActions.length > 1) {
+				arrActions.pop();
+				textArea.value = arrActions[arrActions.length-1];	
+			}
+		};
+	};
+
+	var textarea = new TextArea();
+	var textarea2 = new TextArea();
+</script>
+
+<style>
+button {cursor: pointer}
+.modal {
+	display: block;
+	width: 600px;
+	max-width: 100%;
+	height: 400px;
+	max-height: 100%;
+	position: fixed;
+	z-index: 100;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	background: white;
+	box-shadow: 0 0 60px 10px rgba(0, 0, 0, 0.9);
+}
+.closed {display: none;}
+
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 50;
+	background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-guts {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	padding: 30px 20px;
+}
+
+.my-button {
+	position: absolute;
+	border: 0;
+	font-size: 21px;
+	color: #fff;
+	line-height: 35px;
+	border-radius: 5px;
+}
+.modal .close-button {
+	z-index: 1;
+	top: 10px;
+	right: 20px;
+	background: black;
+}
+.open-button {
+	top: 50%;
+	left: 50%;
+	background: green;
+	transform: translate(-50%, -50%);
+}
+</style>
+
+</html>
